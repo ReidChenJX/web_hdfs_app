@@ -23,9 +23,9 @@ def register():
         error = None
         
         if not username:
-            error = 'Username is required.'
+            error = f'Username is required.'
         elif not password:
-            error = 'Password is required.'
+            error = f'Password is required.'
         elif db.execute('select id from user where username = ?',(username,)).fetchone() is not None:
             error = f"User {username} is already registered."
         if error is None:
@@ -49,7 +49,7 @@ def login():
         db = get_db()  # 创建数据库会话
         error = None
         # 判断登录名是否在数据库中
-        user = db.execute('select * from user where username = ?',(username)).fetchone()
+        user = db.execute('select * from user where username = ?',(username,)).fetchone()
         
         if user is None:
             error = 'Incorrect username.'
@@ -57,7 +57,7 @@ def login():
         elif not check_password_hash(user['password'],password):
             error = 'Incorrect password.'
             
-        if error in None:
+        if error is None:
             session.clear()
             # 将客户ID存储在会话的cookie中
             session['user_id'] = user['id']
@@ -75,7 +75,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute('SELECT * FROM user WHERE id = ?',(user_id,)).fetchone()
+        g.user = get_db().execute('SELECT * FROM user WHERE id = ?', (user_id,)).fetchone()
         
 @bp.route('/logout')
 def logout():
