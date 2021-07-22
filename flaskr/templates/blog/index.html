@@ -23,7 +23,7 @@
         </header>
     <p class="body">{{ post['body'] }}</p>
     </article>
-    {% if not loop.last %}      {#  loop 是什么#}
+    {% if not loop.last %}      {# loop 是 Jinja for 循环的index #}
     <hr>
     {% endif %}
     {% endfor %}
