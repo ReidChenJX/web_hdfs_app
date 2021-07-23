@@ -1,0 +1,8 @@
+{
+  "user":"postgres",
+  "passwd":"wavenet@1",
+  "ip":"172.18.0.201",
+  "port":"5432",
+  "database":"drain_facilities"
+
+}

@@ -5,7 +5,10 @@
 # Document  ：
 
 import os
+import json
 from flask import Flask
+from flask_bootstrap import Bootstrap
+
 
 def create_app(test_config=None):
     """
@@ -14,9 +17,25 @@ def create_app(test_config=None):
     :return:
     """
     app = Flask(__name__, instance_relative_config=True)
+    bootstrap = Bootstrap(app)
+    
+    # Database set
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    uploadDir = os.path.join(basedir, 'static/database')
+    with open(uploadDir, 'r') as load_f:
+        data_info = json.load(load_f)
+    
+    database_url = 'postgresql+psycopg2://{user}:{passwd}@{ip}:{port}/{database}'.format(
+        user=data_info['user'], passwd=data_info['passwd'], ip=data_info['ip'],
+        port=data_info['port'], database=data_info['database']
+    )
+    
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite')
+        # DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        SQLALCHEMY_DATABASE_URI=database_url,
+        SQLALCHEMY_COMMIT_ON_TEARDOWN=True,
+        SQLALCHEMY_TRACK_MODIFICATIONS=True
     )
     # 如果是在测试模式下，加载测试的配置信息
     if test_config is None:
@@ -36,9 +55,10 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
     
-    from . import auth, blog
+    from . import auth, blog, upload
     app.register_blueprint(auth.bp)
     app.register_blueprint(blog.bp)
-    app.add_url_rule('/',endpoint='index')
+    app.register_blueprint(upload.bp)
+    app.add_url_rule('/', endpoint='index')
     
     return app
