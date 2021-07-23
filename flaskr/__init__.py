@@ -8,7 +8,9 @@ import os
 import json
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
 
 def create_app(test_config=None):
     """
@@ -51,8 +53,8 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return f'Hello World !'
-    
-    from . import db
+
+    bootstrap.init_app(app)
     db.init_app(app)
     
     from . import auth, blog, upload
