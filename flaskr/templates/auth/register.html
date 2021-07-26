@@ -1,16 +1,21 @@
 {% extends 'base.html' %}
-
-{% block header %}
-<h1>{% block title %}Register{% endblock %}</h1>
-{% endblock %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
-<form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Register">
 
-</form>
+<div class="container">
+  <div class="col-md-5 col-center-block">
+    <div class="row">
+      <div class="col-md-11">
+        <div class="share mrl the-font">
+          <div style="padding:10px;">
+            <div style="border-bottom:2px solid #DAD4D4;padding:10px 10px;background-color:#FFF;box-shadow:5px 5px 20px #CCC;">
+              {{ 'CJX'}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
