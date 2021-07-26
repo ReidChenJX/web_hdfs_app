@@ -11,6 +11,7 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+bootstrap = Bootstrap()
 
 def create_app(test_config=None):
     """
@@ -19,7 +20,6 @@ def create_app(test_config=None):
     :return:
     """
     app = Flask(__name__, instance_relative_config=True)
-    bootstrap = Bootstrap(app)
     
     # Database set
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -34,7 +34,6 @@ def create_app(test_config=None):
     
     app.config.from_mapping(
         SECRET_KEY='dev',
-        # DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
         SQLALCHEMY_DATABASE_URI=database_url,
         SQLALCHEMY_COMMIT_ON_TEARDOWN=True,
         SQLALCHEMY_TRACK_MODIFICATIONS=True

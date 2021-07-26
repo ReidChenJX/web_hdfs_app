@@ -9,7 +9,7 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
 
 from flaskr.auth import login_required
-from flaskr.db import get_db
+# from flaskr.db import get_db
 import os
 
 bp = Blueprint('upload',__name__)

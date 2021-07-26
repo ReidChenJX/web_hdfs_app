@@ -7,10 +7,12 @@
 import functools
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.db import get_db
+from . import db
+from .db_table import UserTable
 
 # 使用蓝图，蓝图的名称会添加到函数名称的前面
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -19,24 +21,23 @@ def register():
         # 读取连接请求中的数据
         username = request.form['username']
         password = request.form['password']
-        db = get_db()       # 创建数据库会话
         error = None
         
         if not username:
             error = f'Username is required.'
         elif not password:
             error = f'Password is required.'
-        elif db.execute('select id from user where username = ?',(username,)).fetchone() is not None:
+        elif UserTable.query.filter_by(username=username).count() :
             error = f"User {username} is already registered."
         if error is None:
-            # 存储账户密码,密码加密
-            db.execute('insert into user (username,password) values (?,?)',
-                       (username, generate_password_hash(password)))
-            db.commit()
+            user = UserTable(username=username,
+                             password=generate_password_hash(password))
+            db.session.add(user)
+            db.session.commit()
             # 注册成功，返回登录页面
             return redirect(url_for('auth.login'))
         # 注册失败，返回错误信息
-        flash(error)        # 储存在渲染模块时可以调用的信息
+        flash(error)  # 储存在渲染模块时可以调用的信息
     return render_template('auth/register.html')
 
 
@@ -46,26 +47,26 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()  # 创建数据库会话
         error = None
         # 判断登录名是否在数据库中
-        user = db.execute('select * from user where username = ?',(username,)).fetchone()
+        user = UserTable.query.filter_by(username=username).first_or_404()
         
         if user is None:
             error = 'Incorrect username.'
         # 验证登录密码
-        elif not check_password_hash(user['password'],password):
+        elif not check_password_hash(user.password, password):
             error = 'Incorrect password.'
-            
+        
         if error is None:
             session.clear()
             # 将客户ID存储在会话的cookie中
-            session['user_id'] = user['id']
+            session['user_id'] = user.id
             # 登录成功，返回首页
             return redirect(url_for('index'))
-            
+        
         flash(error)
     return render_template('auth/login.html')
+
 
 @bp.before_app_request
 def load_logged_in_user():
@@ -75,13 +76,15 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute('SELECT * FROM user WHERE id = ?', (user_id,)).fetchone()
-        
+        g.user = UserTable.query.filter_by(id=user_id).first_or_404()
+
+
 @bp.route('/logout')
 def logout():
     # 注销当前账户
     session.clear()
     return redirect(url_for('index'))
+
 
 def login_required(view):
     # 判断用户是否载入，若未载入则跳转登录页面
@@ -91,7 +94,5 @@ def login_required(view):
             return redirect(url_for('auth.login'))
         
         return view(**kwargs)
+    
     return wrapped_view
-
-
-

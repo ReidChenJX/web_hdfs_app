@@ -37,10 +37,12 @@ class UserTable(db.Model):
     password = db.Column(db.String(128))
 
 
+
+
 class PostTable(db.Model):
     __tablename__ = 'post_table'
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('user_table.id'))
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     title = db.Column(db.String(64))
     body = db.Column(db.Text)
