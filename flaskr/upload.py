@@ -12,26 +12,27 @@ from flaskr.auth import login_required
 # from flaskr.db import get_db
 import os
 
-bp = Blueprint('upload',__name__)
+bp = Blueprint('upload', __name__)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-uploadDir = os.path.join(basedir,'static/uploads')
+uploadDir = os.path.join(basedir, 'static/uploads')
 
-@bp.route('/upload', methods=('GET','POST'))
+
+@bp.route('/upload', methods=('GET', 'POST'))
 def upload():
-    if request.method=='POST':
+    if request.method == 'POST':
         f = request.files.get('selectfile')
         if not os.path.exists(uploadDir):
             os.makedirs(uploadDir)
-            
+        
         if f:
             filename = secure_filename(f.filename)
             types = ['jpg', 'png', 'tif']
             if filename.split('.')[-1] in types:
-                uploadpath = os.path.join(uploadDir,filename)
+                uploadpath = os.path.join(uploadDir, filename)
                 f.save(uploadpath)
                 flash('Upload Load Successful!', 'success')
-                return render_template('upload/upload.html',imagename=filename)
+                return render_template('upload/upload.html', imagename=filename)
             else:
                 flash('Unknown Types!', 'danger')
         else:

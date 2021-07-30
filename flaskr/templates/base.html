@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% extends 'bootstrap/base.html' %}
 
 {% block head %}
 {{ super() }}
@@ -37,17 +36,17 @@
   ------------------------------------*/
 footer {
   bottom:0;
-  background: #333;
-  color: #eee;
+  background: #333333;
+  color: #eeeeee;
   font-size: 11px;
-  padding: 20px;
+  padding: 30px;
 }
 ul.unstyled {
   list-style: none;
   padding: 0;
 }
 footer h6 {
-  color: white;
+  color: #ffffff;}
 </style>
 
 
@@ -68,6 +67,10 @@ footer h6 {
 {% include 'includes/_navbar.html' %}
 {% endblock %}
 
+{% block navbar_light %}
+{% include 'includes/_navbar_light.html' %}
+{% endblock %}
+
 
 {% block content %}
 <div class="container" style = "padding:0px;" >
@@ -75,49 +78,6 @@ footer h6 {
   {% endblock %}
 </div>
 
-
-<hr />
-
-<!-- <footer class= "bottom container-fluid foot-wrap navbar-fixed-bottom"> -->
-  <!-- <div class="container" style = "pading:0px;"> -->
-    <!-- <div class="row"> -->
-      <!-- <div class="col-sm-2"> -->
-        <!-- <h6>Copyright &copy;新浪体育</h6> -->
-      <!-- </div> -->
-
-      <!-- <div class="col-sm-4"> -->
-        <!-- <h6>关于我们</h6> -->
-        <!-- <p> -->
-          <!-- 中国上海/2014年8月14日 — 服务于中国及全球华人社群的领先在线媒体公司新浪公司(NASDAQ GS: SINA)今日公布了截至2014年6月30日的第二季度未经审计的财务报告。 -->
-        <!-- </p> -->
-      <!-- </div> -->
-
-      <!-- <div class="col-sm-2"> -->
-        <!-- <h6>导航</h6> -->
-        <!-- <ul class="unstyled"> -->
-          <!-- <li><a href="#">主页</a></li> -->
-          <!-- <li><a href="">服务</a></li> -->
-          <!-- <li><a href="">链接</a></li> -->
-          <!-- <li><a href="">联系我们</a></li> -->
-        <!-- </ul> -->
-      <!-- </div> -->
-
-      <!-- <div class="col-sm-2"> -->
-        <!-- <h6>Follow me</h6> -->
-        <!-- <ul class="unstyled"> -->
-          <!-- <li><a href="">微博</a></li> -->
-          <!-- <li><a href="">微信</a></li> -->
-          <!-- <li><a href="">来往</a></li> -->
-        <!-- </ul> -->
-      <!-- </div> -->
-
-      <!-- <div class="col-sm-2"> -->
-        <!-- <h6>BY<span class="glyphicon glyphicon-heart"></span>M-Kepler</h6> -->
-      <!-- </div> -->
-    <!-- </div> -->
-  <!-- </div> -->
-<!-- </footer>[>页脚结束<] -->
-<!-- </div> -->
 {% endblock %}
 
 

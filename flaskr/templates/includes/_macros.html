@@ -10,7 +10,7 @@
   <div class="carousel-inner" role="listbox">
 
     <!--图片-->
-    <div class="item active" style = "width = 677px">
+    <div class="item active" style = "width:677px">
       <img src="../../static/img/carousel/01.png" alt="风景1">
       <div class="carousel-caption">
         <!--h4中的内容显示到图片上面，-->
@@ -53,13 +53,13 @@
 {% endmacro %}
 
 
-{% macro show_posts(posts, categorys, pagination, moment) %}
+{% macro show_posts(posts, pagination, moment) %}
 {% from "bootstrap/pagination.html" import render_pagination %}
 
 <div class="container">
   <div class="row">
     <div class="col-md-9">
-      {% for post in posts | sort(attribute='create_time', reverse=True) %}
+      {% for post in posts  %}
       <div class="share mrl the-font">
         <div style="padding:10px 0px;"> <!-- <div style="padding:10px ;"> -->
             <div style="border-bottom:0px solid #DAD4D4;padding:10px 10px;background-color:#FFF;box-shadow:5px 5px 20px #CCC;">
@@ -71,23 +71,23 @@
               <div class="profile-thumbnail">
                 <div class = "post-author">
                   <small><span class="glyphicon glyphicon-user" aria-hedden="true"></span>
-                    <a href="{{url_for('blog.index') }}"> {{ post.author.name }}</a>
+                    <a href="{{url_for('blog.index') }}"> {{ post.username }}</a>
                   </small>
                   &nbsp &nbsp
                   <small><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
-                    <!-- {{ post.create_time }} -->
-                    {{ moment(post.create_time).fromNow(refresh=True) }}
+                    <!-- {{ post.created }} -->
+                    {{ moment(post.created).fromNow(refresh=True) }}
                   </small>
                   &nbsp &nbsp &nbsp
                   <span class="glyphicon glyphicon-comment" aria-hidden="true"> </span> &nbsp{{post.comments|count}} </button></a>
 
-              {% if post.private%}
-              &nbsp &nbsp &nbsp
-              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"> </span>
-              {% else %}
-              &nbsp &nbsp &nbsp
-              <span class="glyphicon glyphicon-eye-open" aria-hidden="true"> </span> &nbsp{{post.read_count}} </button></a>
-          {% endif %}
+{#              {% if post.private%}#}
+{#              &nbsp &nbsp &nbsp#}
+{#              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"> </span>#}
+{#              {% else %}#}
+{#              &nbsp &nbsp &nbsp#}
+{#              <span class="glyphicon glyphicon-eye-open" aria-hidden="true"> </span> &nbsp{{post.read_count}} </button></a>#}
+{#          {% endif %}#}
 
         </div>
 
@@ -95,31 +95,32 @@
       <hr />
       <!-- tag & readmore -->
       <div>
-        {% if post.private  %}
-        <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"> Personal Article</span>
-        {% elif not post.private %}
-        <p>{{post.body_html|safe|truncate(300,True)}}</p>
-        {% endif %}
+{#        {% if post.private  %}#}
+{#        <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"> Personal Article</span>#}
+{#        {% elif not post.private %}#}
+{#        <p>{{post.body_html|safe|truncate(300,True)}}</p>#}
+{#        {% endif %}#}
 
       </div>
       <hr />
 
-      <p> {% for category in post.categorys %}
-        <!-- <a href="{{ url_for('blog.index') }}"> -->
-          <a href="{{ url_for('blog.index') }}">
-            <span class="label label-primary text-left"> <span class="glyphicon glyphicon-tag" aria-hidden="true">
-          </span> {{category.name|upper}}</span></a>
-          {% endfor %}
+      <p>
+{#          {% for category in post.categorys %}#}
+{#        <!-- <a href="{{ url_for('blog.index') }}"> -->#}
+{#          <a href="{{ url_for('blog.index') }}">#}
+{#            <span class="label label-primary text-left"> <span class="glyphicon glyphicon-tag" aria-hidden="true">#}
+{#          </span> {{category.name|upper}}</span></a>#}
+{#          {% endfor %}#}
 
-          {% if current_user.is_administrator() %}
-          <a href="{{ url_for('blog.index') }}" style="float:right">
-            <button class="btn  btn-sm btn-default btn-text-right">
-              <span class="glyphicon glyphicon-trash" aria-hidden="true"> </span> Delete </button></a>
-
-          <a href="{{ url_for('blog.index') }}" style="float:right">
-            <button class="btn  btn-sm btn-default btn-text-right">
-              <span class="glyphicon glyphicon-edit" aria-hidden="true"> </span> Edit </button></a>
-          {% endif %}
+{#          {% if current_user.is_administrator() %}#}
+{#          <a href="{{ url_for('blog.index') }}" style="float:right">#}
+{#            <button class="btn  btn-sm btn-default btn-text-right">#}
+{#              <span class="glyphicon glyphicon-trash" aria-hidden="true"> </span> Delete </button></a>#}
+{##}
+{#          <a href="{{ url_for('blog.index') }}" style="float:right">#}
+{#            <button class="btn  btn-sm btn-default btn-text-right">#}
+{#              <span class="glyphicon glyphicon-edit" aria-hidden="true"> </span> Edit </button></a>#}
+{#          {% endif %}#}
 
           <a href="{{ url_for('blog.index') }}" style="float:right">
             <button class="btn  btn-sm btn-primary btn-text-right"> <span class="glyphicon glyphicon-share-alt" aria-hidden="true">
@@ -139,7 +140,7 @@
 </div>
 {% endmacro%}
 
-{% macro show_sidebar(posts, categorys) %}
+{% macro show_sidebar(posts) %}
 
 <!-- sidebar右侧栏 -->
 <div class="col-md-3">
@@ -166,17 +167,17 @@
       <div style="border-bottom:1px solid #DAD4D4;;padding:10px 10px;">
         <h5><span class="glyphicon glyphicon-tags" aria-hidden="true">&nbsp</span>CATEGORY</h5>
       </div>
-      <ul>
-        {% for category in categorys %}
-        <li class="presentation" style="padding-top:0px;">
-          <a href="{{ url_for('blog.index' ) }}" >
-            <p><span style="font-size:14px;background-color:#FFF" class="glyphicon glyphicon-tags" aria-hidden="true"> {{ category.name|upper }}</span>
-              <span class="badge text-right" style="float:right"> {{ category.posts.all()|count}}</span>
-            </p>
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
+{#      <ul>#}
+{#        {% for category in categorys %}#}
+{#        <li class="presentation" style="padding-top:0px;">#}
+{#          <a href="{{ url_for('blog.index' ) }}" >#}
+{#            <p><span style="font-size:14px;background-color:#FFF" class="glyphicon glyphicon-tags" aria-hidden="true"> {{ category.name|upper }}</span>#}
+{#              <span class="badge text-right" style="float:right"> {{ category.posts.all()|count}}</span>#}
+{#            </p>#}
+{#          </a>#}
+{#        </li>#}
+{#        {% endfor %}#}
+{#      </ul>#}
     </div>
   </div>
 
@@ -186,7 +187,7 @@
         <h5><span class="glyphicon glyphicon-fire" aria-hidden="true">&nbsp</span>HOT</h5>
       </div>
       <ul>
-        {% for article in posts[:10] | sort(attribute='read_count',reverse=True)%}
+        {% for article in posts[:10] %}
         <li class="presentation" style="padding-top:0px;">
           <a href="{{ url_for('blog.index') }}" >
             <p><span style="font-size:14px;background-color:#FFF" class="glyphicon glyphicon-#" aria-hidden="true">

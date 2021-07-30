@@ -9,9 +9,12 @@ import json
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_moment import Moment
+from .config import config
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
+moment = Moment()
 
 def create_app(test_config=None):
     """
@@ -32,17 +35,13 @@ def create_app(test_config=None):
         port=data_info['port'], database=data_info['database']
     )
     
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI=database_url,
-        SQLALCHEMY_COMMIT_ON_TEARDOWN=True,
-        SQLALCHEMY_TRACK_MODIFICATIONS=True
-    )
-    # 如果是在测试模式下，加载测试的配置信息
+    # 配置管理
     if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
+        app.config.from_object(config['default'])
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     else:
-        app.config.from_mapping(test_config)
+        # 如果是在测试模式下，加载测试的配置信息
+        app.config.from_object(config['testing'])
     
     try:
         os.mkdir(app.instance_path)
@@ -53,13 +52,15 @@ def create_app(test_config=None):
     def hello():
         return f'Hello World !'
 
+    moment.init_app(app)
     bootstrap.init_app(app)
     db.init_app(app)
     
-    from . import auth, blog, upload
+    # from . import auth, upload
+    from . import auth,blog
     app.register_blueprint(auth.bp)
     app.register_blueprint(blog.bp)
-    app.register_blueprint(upload.bp)
+    # app.register_blueprint(upload.bp)
     app.add_url_rule('/', endpoint='index')
     
     return app

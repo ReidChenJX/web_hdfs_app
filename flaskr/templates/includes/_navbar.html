@@ -13,20 +13,20 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <span> <a class="navbar-brand" href="{{url_for('blog.index')}}"> M-Kepler</a> </span>
+        <span> <a class="navbar-brand" href="{{url_for('auth.login')}}"> 服务平台</a> </span>
       </div>
       <div class="navbar-collapse collapse"
         id="7bc75dbef69e41ff2452de70079c8ece1320ea7c">
         <ul class="nav navbar-nav">
-          <li {% if url_for('blog.index')  %}class="active"{% endif %}>
-            <a href="{{ url_for('blog.index') }}" title="{{ ("HOME") }}">{{ ("HOME") }}</a>
+          <li {% if url_for('auth.login')  %}class="active"{% endif %}>
+            <a href="{{ url_for('auth.login') }}" title="{{ ("HOME") }}">{{ ("服务列表") }}</a>
           </li>
           <!-- 根据日期group_by -->
-          <li {% if url_for('blog.index')  %}class="active"{% endif %}>
-            <a href="{{ url_for('blog.index') }}" title="{{ ("ARCHIVE") }}">{{ ("ARCHIVE") }}</a>
+          <li {% if url_for('auth.login')  %}class="active"{% endif %}>
+            <a href="{{ url_for('auth.login') }}" title="{{ ("ARCHIVE") }}">{{ ("文件上传") }}</a>
           </li>
-          <li {% if url_for('blog.index')  %}class="active"{% endif %}>
-            <a href="{{ url_for('blog.index') }}" title="{{ ("ABOUT") }}">{{ ("ABOUT") }}</a>
+          <li {% if url_for('auth.login')  %}class="active"{% endif %}>
+            <a href="{{ url_for('auth.login') }}" title="{{ ("ABOUT") }}">{{ ("ABOUT") }}</a>
           </li>
 
           {% if True %}
@@ -48,11 +48,11 @@
 
         <ul class="nav navbar-nav navbar-right">
           {% if True %}
-          <li><a href="{{url_for('blog.index')}}">{{ 'CJX' }}</a></li>
-          <li><a href="{{ url_for('blog.index') }}">{{ ("Exit") }}</a></li>
+          <li><a href="{{url_for('auth.login')}}">{{ 'CJX' }}</a></li>
+          <li><a href="{{ url_for('auth.login') }}">{{ ("Exit") }}</a></li>
           {% else %}
-          <li><a href="{{ url_for('blog.index') }}">{{ ("Sign in") }}</a></li>
-          <li><a href="{{ url_for('blog.index') }}">{{ ("Sign up") }}</a></li>
+          <li><a href="{{ url_for('auth.login') }}">{{ ("Sign in") }}</a></li>
+          <li><a href="{{ url_for('auth.login') }}">{{ ("Sign up") }}</a></li>
           {% endif %}
         </ul>
       </div>

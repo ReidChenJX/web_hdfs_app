@@ -16,7 +16,7 @@ from . import db
 
 def init_db():
     # 初始化数据库
-    with current_app.open_resource('schema.sql') as f:
+    with current_app.open_resource('static/schema.sql') as f:
         db.session.execute(f.read().decode('utf8'))
 
 
