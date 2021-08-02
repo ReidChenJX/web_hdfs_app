@@ -357,7 +357,7 @@
             <!-- content 页面主内容-->
             <!-- ============================================================== -->
             <div class="container my-4">
-                    <form id="upload-form" enctype="multipart/form-data">
+                    <form id="upload-form" enctype="multipart/form-data" method="POST">
                         <div class="form-group">
                             <div class="file-loading">
                                 <input id="md5file" name="md5file" class="file" type="file" multiple data-preview-file-type="any" data-theme="fas">
@@ -408,38 +408,24 @@
                 </div>
             </div>
 </body>
-{#<script>#}
-{#    $('#md5File').fileinput({#}
-{#        language: 'zh',#}
-{#        uploadUrl: 'http://localhost:5000/',#}
-{#        showCaption: true,//是否显示被选文件的简介#}
-{#        showUpload: true,//是否显示上传按钮#}
-{#        showRemove: true,//是否显示删除按钮#}
-{#        showClose: true,//是否显示关闭按钮#}
-{#        enctype: 'multipart/form-data',#}
-{#        uploadAsync:true, //false 同步上传，后台用数组接收，true 异步上传，每次上传一个file,会调用多次接口#}
-{#        layoutTemplates: {#}
-{#          actionUpload: ''//就是让文件上传中的文件去除上传按钮#}
-{#    //      actionDelete: '',//去除删除按钮#}
-{#        },#}
-{#        browseClass: 'btn btn-primary',#}
-{#        maxFileCount: 20,#}
-{#        minFileCount : 1,#}
-{#      }).on("fileuploaded", function (event, data, previewId, index) {#}
-{#        console.log(res);#}
-{#      });#}
-{##}
-{#</script>#}
+
 <script>
-$(document).ready(function() {
-    // initialize with defaults
-    $("md5file").fileinput();
+    $('#md5file').fileinput({
+        language: 'zh',
+        uploadUrl: '/upload',
+        showCaption: true,//是否显示被选文件的简介
+        showUpload: true,//是否显示上传按钮
+        showRemove: true,//是否显示删除按钮
+        showClose: true,//是否显示关闭按钮
+        enctype: 'multipart/form-data',
+        uploadAsync:true, //false 同步上传，后台用数组接收，true 异步上传，每次上传一个file,会调用多次接口
+        browseClass: 'btn btn-primary',
+        maxFileCount: 20,
+        minFileCount : 1,
+      }).on("fileuploaded", function (res) {
+          console.log(res);
+      });
 
-    // with plugin options
-    $("md5file").fileinput({'uploadUrl': '/upload', 'previewFileType': 'any', 'type':'POST'});
-});
 </script>
 
-</script>
- 
 </html>

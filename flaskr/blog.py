@@ -5,7 +5,7 @@
 # Document  ：主页面功能
 
 import os
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, jsonify, session
 from werkzeug.exceptions import abort
 from .config import DevelopmentConfig as config
 from flaskr.auth import login_required
@@ -18,7 +18,7 @@ from werkzeug.utils import secure_filename
 bp = Blueprint('blog', __name__)
 
 
-@bp.route('/')
+@bp.route('/', methods=['GET', 'POST'])
 def index():
     # 判断当前是否已经登录，没有登录则返回登录页
     if not  g.user:
@@ -29,61 +29,37 @@ def index():
     #     PostTable.created.desc()).paginate(page_index, per_page=config.PER_POSTS_PER_PAGE,error_out=False)
     
     # posts = pagination.items
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    uploadDir = os.path.join(basedir, 'static/uploads')
-    
-    if request.method == 'GET':
+
+    if request.method == 'POST':
         print('1111111111111111')
-        f = request.files.get('selectfile')
-        if not os.path.exists(uploadDir):
-            os.makedirs(uploadDir)
-    
-        if f:
-            filename = secure_filename(f.filename)
-            types = ['jpg', 'png', 'tif']
-            if filename.split('.')[-1] in types:
-                uploadpath = os.path.join(uploadDir, filename)
-                f.save(uploadpath)
-                flash('Upload Load Successful!', 'success')
-                return render_template('main/index_blank.html')
-            else:
-                flash('Unknown Types!', 'fail')
-        else:
-            flash('No File Selected.', 'fail')
+
     return render_template('main/index_blank.html')
 
-    # return render_template('main/index_blank.html',
-    #                        title='Index',
-    #                        posts=posts,
-    #                        pagination=pagination,
-    #                        current_time = datetime.utcnow())
+
     
     
-@bp.route('/upload')
+@bp.route('/upload',methods=['GET', 'POST'])
 def upload():
     
     basedir = os.path.abspath(os.path.dirname(__file__))
-    uploadDir = os.path.join(basedir, 'static/uploads')
-    print('11111111111111')
-    if request.method == 'POST':
-        print('22222222222222222')
-        f = request.files.get('selectfile')
+    session_name = session['user_name']
+    uploadDir = os.path.join(basedir, 'FileRecv/{username}'.format(username=session_name))
+    
+    if request.method == 'GET':
+        return "is upload file ... "
+    else:
+        f = request.files.get('md5file')
+        print(f)
         if not os.path.exists(uploadDir):
             os.makedirs(uploadDir)
         
-        if f:
-            filename = secure_filename(f.filename)
-            types = ['jpg', 'png', 'tif']
-            if filename.split('.')[-1] in types:
-                uploadpath = os.path.join(uploadDir, filename)
-                f.save(uploadpath)
-                flash('Upload Load Successful!', 'success')
-                return render_template('main/index_blank.html')
-            else:
-                flash('Unknown Types!', 'fail')
-        else:
-            flash('No File Selected.', 'fail')
-    return render_template('main/index_blank.html')
+        filename = f.filename
+        uploadpath = os.path.join(uploadDir, filename)
+        print(uploadpath)
+        f.save(uploadpath)
+        return jsonify({"code":200,
+                        "info":"文件：%s 上传成功" % filename})
+
 
 
 @bp.route('/create', methods=('GET', 'POST'))
