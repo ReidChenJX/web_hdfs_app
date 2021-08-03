@@ -39,6 +39,7 @@ def create_app(test_config=None):
     if test_config is None:
         app.config.from_object(config['default'])
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+        app.config['basedir'] = basedir
     else:
         # 如果是在测试模式下，加载测试的配置信息
         app.config.from_object(config['testing'])
@@ -62,5 +63,12 @@ def create_app(test_config=None):
     app.register_blueprint(blog.bp)
     # app.register_blueprint(upload.bp)
     app.add_url_rule('/', endpoint='index')
+
+    @app.template_filter("split_path")
+    def split_path(path):
+        path_list = path.split('/')
+        path_list = [[path_list[i - 1], '/'.join(path_list[:i])] for i in range(1, len(path_list) + 1)]
+        return path_list
     
     return app
+
