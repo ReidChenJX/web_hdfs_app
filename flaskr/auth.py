@@ -11,7 +11,6 @@ from . import db
 from .db_table import UserTable
 from .forms import LoginForm, RegisterForm, ResetPassword
 
-
 # 使用蓝图，蓝图的名称会添加到函数名称的前面
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -25,14 +24,14 @@ def register():
         password = request.form['password']
         password_f = request.form['password_f']
         error = None
-
+        
         if not username:
             error = f'Username is required.'
         elif not password:
             error = f'Password is required.'
         elif password != password_f:
             error = f'两次密码不一致'
-        elif UserTable.query.filter_by(username=username).count() :
+        elif UserTable.query.filter_by(username=username).count():
             error = f"用户名 {username} 已被注册."
         
         if error is None:
@@ -44,7 +43,7 @@ def register():
             return redirect(url_for('auth.login'))
         # 注册失败，返回错误信息
         flash(error)  # 储存在渲染模块时可以调用的信息
-    return render_template('auth/sign-up.html',title='注册')
+    return render_template('auth/sign-up.html', title='注册')
 
 
 @bp.route('/login', methods=('GET', 'POST'))
@@ -73,7 +72,7 @@ def login():
             # 登录成功，返回首页
             return redirect(url_for('blog.index'))
         flash(error)
-    return render_template('auth/login.html',title='登录')
+    return render_template('auth/login.html', title='登录')
 
 
 @bp.before_app_request

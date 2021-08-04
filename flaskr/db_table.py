@@ -4,8 +4,6 @@
 # @Author   : ReidChen
 # Document  ：
 
-import sqlite3
-from flask_sqlalchemy import SQLAlchemy
 import click
 from datetime import datetime
 

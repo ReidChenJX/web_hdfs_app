@@ -5,15 +5,14 @@
 # Document  ：主页面功能
 
 import os
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, jsonify, session, current_app, send_from_directory
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, jsonify, session, current_app, \
+    send_from_directory
 from werkzeug.exceptions import abort
-from .config import DevelopmentConfig as config
 from flaskr.auth import login_required
 from flaskr.db_table import UserTable, PostTable
 from flaskr import db
 from datetime import datetime
-from werkzeug.utils import secure_filename
-from flaskr.function.document_path.document import DocumentReader
+from flaskr.function.document_path.document import DocumentReader, HDFSReader
 
 bp = Blueprint('blog', __name__)
 
@@ -21,17 +20,16 @@ bp = Blueprint('blog', __name__)
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-
     # 分页功能
     # page_index = request.args.get('page', 1, type=int)
     # pagination = PostTable.query.join(UserTable, PostTable.author_id == UserTable.id).order_by(
     #     PostTable.created.desc()).paginate(page_index, per_page=config.PER_POSTS_PER_PAGE,error_out=False)
     
     # posts = pagination.items
-
+    
     if request.method == 'POST':
-        print('1111111111111111')
-
+        print('Succeed')
+    
     return render_template('main/index_blank.html')
 
 
@@ -39,21 +37,24 @@ def index():
 @bp.route('/dir/<path:path_uri>', methods=['GET', 'POST'])
 def dir_local(path_uri=''):
     # 主页面，文件路径,与index区分开
-    base_dir = current_app.config['basedir']
-    real_path = os.path.join(base_dir,path_uri)
-    
-    if not os.path.exists(real_path):
-        return render_template('main/dir_local.html', error_info="错误的路径...")
-    
-    file_reader = DocumentReader(real_path)
-    dirs, files = file_reader.analysis_dir_local()
-    print(path_uri)
-    print(files)
-    return render_template('main/dir_local.html', path=path_uri, dirs=dirs, files=files, error_info=None)
-    
-    
-    
-@bp.route('/upload',methods=['GET', 'POST'])
+    if request.method == 'POST':
+        hdfs_dir = '/filehouse/file/'
+        real_path = hdfs_dir + path_uri
+        print(real_path)
+        # if not os.path.exists(real_path):
+        #     return render_template('main/dir_local.html', error_info="错误的路径...")
+        
+        file_reader = HDFSReader(real_path)
+        dirs, files = file_reader.analysis_dir_hdfs()
+
+        return render_template('main/dir_local.html', path=path_uri, dirs=dirs, files=files, error_info=None)
+
+def split_path(path):
+    path_list = path.split('/')
+    path_list = [[path_list[i - 1], '/'.join(path_list[:i])] for i in range(1, len(path_list) + 1)]
+    return path_list
+
+@bp.route('/upload', methods=['GET', 'POST'])
 def upload():
     # 文件上传功能
     basedir = os.path.abspath(os.path.dirname(__file__))
@@ -72,14 +73,14 @@ def upload():
         uploadpath = os.path.join(uploadDir, filename)
         print(uploadpath)
         f.save(uploadpath)
-        return jsonify({"code":200,
-                        "info":"文件：%s 上传成功" % filename})
+        return jsonify({"code": 200,
+                        "info": "文件：%s 上传成功" % filename})
 
 
 @bp.route('/download/<filename>')
 @bp.route('/download/<path:path>/<filename>')
 def download(filename, path=None):
-    # 页面下载文件
+    # 页面下载文件功能
     if not path:
         real_path = current_app.config['basedir']
     else:
@@ -103,7 +104,7 @@ def create():
         else:
             article = PostTable(title=title, body=body, author_id=g.user.id)
             db.session.add(article)
-
+            
             db.session.commit()
             return redirect(url_for('blog.index'))
     return render_template('main/create.html')
@@ -149,6 +150,6 @@ def update(id):
 def delete(id):
     get_post(id)
     PostTable.query.filter(PostTable.id == id).delete()
-
+    
     db.session.commit()
     return redirect(url_for('blog.index'))

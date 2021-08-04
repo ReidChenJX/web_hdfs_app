@@ -41,3 +41,24 @@ config = {
     'testing': TestingConfig,
     'default': DevelopmentConfig
 }
+
+class HDFSConfig:
+    # 维护 HDFS 地址与对应的数据库地址
+    # Linux环境
+    linux_ip = '172.18.0.202'
+    linux_user = 'root'
+    linux_passwd = 'sangfor@2021'
+    # HDFS 环境
+    pyhdfs_hosts = '172.18.0.202:50070,172.18.0.203:50070'
+    hdfs_user = 'hadoop'
+    # 地址信息
+    linux_path = '/home/project/tmp_file/'
+    hdfs_path = '/filehouse/'       # HDFS 对于文件管理系统的跟目录
+
+    # 中间数据库地址
+    # 向中间库写入地址对应关系
+    ip = '172.18.0.201'
+    port = '5432'
+    user = 'postgres'
+    passwd = 'wavenet'
+    database = 'flask_app'

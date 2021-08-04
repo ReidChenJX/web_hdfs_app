@@ -26,8 +26,8 @@ def create_app(test_config=None):
     
     # Database set
     basedir = os.path.abspath(os.path.dirname(__file__))
-    uploadDir = os.path.join(basedir, 'static/database')
-    with open(uploadDir, 'r') as load_f:
+    databaseDir = os.path.join(basedir, 'static/database')
+    with open(databaseDir, 'r') as load_f:
         data_info = json.load(load_f)
     
     database_url = 'postgresql+psycopg2://{user}:{passwd}@{ip}:{port}/{database}'.format(
@@ -39,7 +39,7 @@ def create_app(test_config=None):
     if test_config is None:
         app.config.from_object(config['default'])
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-        app.config['basedir'] = basedir
+        app.config['basedir'] = os.path.abspath(os.path.dirname(__file__))
     else:
         # 如果是在测试模式下，加载测试的配置信息
         app.config.from_object(config['testing'])
