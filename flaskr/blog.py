@@ -11,8 +11,8 @@ from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from flaskr.db_table import UserTable, PostTable
 from flaskr import db
-from datetime import datetime
 from flaskr.function.document_path.document import DocumentReader, HDFSReader
+from flaskr.function.upload_file.colle_file import LinuxToHdfs
 
 bp = Blueprint('blog', __name__)
 
@@ -36,27 +36,42 @@ def index():
 @bp.route('/dir', methods=['GET', 'POST'])
 @bp.route('/dir/<path:path_uri>', methods=['GET', 'POST'])
 def dir_local(path_uri=''):
-    # 主页面，文件路径,与index区分开
-    if request.method == 'POST':
-        hdfs_dir = '/filehouse/file/'
-        real_path = hdfs_dir + path_uri
-        print(real_path)
-        # if not os.path.exists(real_path):
-        #     return render_template('main/dir_local.html', error_info="错误的路径...")
-        
-        file_reader = HDFSReader(real_path)
-        dirs, files = file_reader.analysis_dir_hdfs()
+    base_dir = current_app.config['basedir']
+    real_path = os.path.join(base_dir, path_uri)
+    if not os.path.exists(real_path):
+        return render_template('main/dir_local.html', error_info='错误的路径...')
+    file_reader = DocumentReader(real_path, base_dir)
+    dirs, files = file_reader.analysis_dir_local()
+    
+    return render_template('main/dir_local.html', path=path_uri, dirs=dirs, files=files, error_info=None)
 
-        return render_template('main/dir_local.html', path=path_uri, dirs=dirs, files=files, error_info=None)
+
+@bp.route('/hdfs', methods=['GET', 'POST'])
+@bp.route('/hdfs/<path:path_uri>', methods=['GET', 'POST'])
+def dir_hdfs(path_uri=''):
+    # 主页面，文件路径,与index区分开
+    
+    hdfs_dir = current_app.config['hdfs_dir']
+    real_path = os.path.join(hdfs_dir, path_uri)
+    
+    file_reader = HDFSReader(real_path)
+    
+    if not file_reader.linux_sion.exists(real_path):
+        return render_template('main/dir_local.html', error_info="错误的路径...")
+    dirs, files = file_reader.analysis_dir_hdfs()
+    
+    return render_template('main/dir_hdfs.html', path=path_uri, dirs=dirs, files=files, error_info=None)
+
 
 def split_path(path):
     path_list = path.split('/')
     path_list = [[path_list[i - 1], '/'.join(path_list[:i])] for i in range(1, len(path_list) + 1)]
     return path_list
 
+
 @bp.route('/upload', methods=['GET', 'POST'])
 def upload():
-    # 文件上传功能
+    # 文件上传功能,异步上传，只用考虑单文件情况
     basedir = os.path.abspath(os.path.dirname(__file__))
     session_name = session['user_name']
     uploadDir = os.path.join(basedir, 'FileRecv/{username}'.format(username=session_name))
@@ -65,14 +80,16 @@ def upload():
         return "is upload file ... "
     else:
         f = request.files.get('md5file')
-        print(f)
         if not os.path.exists(uploadDir):
             os.makedirs(uploadDir)
         
         filename = f.filename
         uploadpath = os.path.join(uploadDir, filename)
-        print(uploadpath)
         f.save(uploadpath)
+        # 本地文件上传至服务器后，将服务器文件上传至HDFS
+        local_file_path = ''
+        hdfs_file_path = ''
+        # funcation
         return jsonify({"code": 200,
                         "info": "文件：%s 上传成功" % filename})
 

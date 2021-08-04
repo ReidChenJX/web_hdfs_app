@@ -10,9 +10,22 @@ from flaskr.config import HDFSConfig
 from flaskr.function.upload_file.colle_file import LinuxToHdfs
 
 
+def get_size(size):
+    # 文件大小转换
+    if size < 1024:
+        return '%d  B' % size
+    elif 1024 <= size < 1024 * 1024:
+        return '%.2f KB' % (size / 1024)
+    elif 1024 * 1024 <= size < 1024 * 1024 * 1024:
+        return '%.2f MB' % (size / (1024 * 1024))
+    else:
+        return '%.2f GB' % (size / (1024 * 1024 * 1024))
+
+
 class DocumentReader:
-    def __init__(self, real_path):
+    def __init__(self, real_path, basedir):
         self.real_path = real_path
+        self.basedir = basedir
     
     def analysis_dir_local(self):
         dirs = []
@@ -25,22 +38,11 @@ class DocumentReader:
                 dirs.append([name,_time,'文件夹','-'])
             elif os.path.isfile(name):
                 file_type = os.path.splitext(name)[-1]
-                size = self.get_size(os.path.getsize(name))
+                size = get_size(os.path.getsize(name))
                 files.append([name, _time, file_type, size])
+        os.chdir(self.basedir)
         return dirs, files
-                
-                
-    @staticmethod
-    def get_size(size):
-        if size < 1024:
-            return '%d  B' % size
-        elif 1024 <= size < 1024 * 1024:
-            return '%.2f KB' % (size / 1024)
-        elif 1024 * 1024 <= size < 1024 * 1024 * 1024:
-            return '%.2f MB' % (size / (1024 * 1024))
-        else:
-            return '%.2f GB' % (size / (1024 * 1024 * 1024))
-        
+ 
 
 class HDFSReader(HDFSConfig):
     def __init__(self, real_path):
@@ -56,24 +58,13 @@ class HDFSReader(HDFSConfig):
         files = []
         
         list_xattrs = self.linux_sion.list_status(self.real_path)
-        
+        print(list_xattrs)
         for f in list_xattrs:
-            _time = time.strftime("%Y/%m/%d %H:%M", time.localtime(f.modificationTime))
+            _time = time.strftime("%Y/%m/%d %H:%M", time.localtime(f.modificationTime // 1000))
             if f.type == 'DIRECTORY':
                 dirs.append([f.pathSuffix, _time, '文件夹', '-'])
             elif f.type == 'FILE':
                 file_type = f.pathSuffix.split('.')[-1]
-                size = self.get_size(f.length)
+                size = get_size(f.length)
                 files.append([f.pathSuffix, _time, file_type, size])
         return dirs, files
-
-    @staticmethod
-    def get_size(size):
-        if size < 1024:
-            return '%d  B' % size
-        elif 1024 <= size < 1024 * 1024:
-            return '%.2f KB' % (size / 1024)
-        elif 1024 * 1024 <= size < 1024 * 1024 * 1024:
-            return '%.2f MB' % (size / (1024 * 1024))
-        else:
-            return '%.2f GB' % (size / (1024 * 1024 * 1024))

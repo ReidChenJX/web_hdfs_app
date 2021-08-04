@@ -40,6 +40,7 @@ def create_app(test_config=None):
         app.config.from_object(config['default'])
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
         app.config['basedir'] = os.path.abspath(os.path.dirname(__file__))
+        app.config['hdfs_dir'] = '/filehouse/'
     else:
         # 如果是在测试模式下，加载测试的配置信息
         app.config.from_object(config['testing'])

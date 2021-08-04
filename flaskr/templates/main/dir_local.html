@@ -7,26 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>上传文件至HDFS文件管理平台</title>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="../../static/assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../static/assets/vendor/fonts/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="../../static/assets/vendor/fileinput/css/fileinput.css">
-    <link rel="stylesheet" href="../../static/assets/vendor/fonts/all.css">
-    <link rel="stylesheet" href="../../static/assets/vendor/fonts/circular-std/style.css">
-    <link rel="stylesheet" href="../../static/assets/libs/css/style.css">
-    <link rel="stylesheet" href="../../static/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendor/fonts/bootstrap-icons.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendor/fileinput/css/fileinput.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendor/fonts/all.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendor/fonts/circular-std/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/libs/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/vendor/fonts/fontawesome/css/fontawesome-all.css') }}">
     <!-- Optional JavaScript -->
-    <script src="../../static/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
-    <script src="../../static/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="../../static/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
-    <script src="../../static/assets/libs/js/main-js.js"></script>
-    <script src="../../static/assets/vendor/fileinput/js/fileinput.js"></script>
-    <script src="../../static/assets/vendor/fileinput/js/zh.js"></script>
-    <script src="../../static/assets/vendor/fileinput/js/plugins/piexif.js" type="text/javascript"></script>
-    <script src="../../static/assets/vendor/fileinput/js/plugins/sortable.js" type="text/javascript"></script>
-    <script src="../../static/assets/vendor/fileinput/js/locales/fr.js" type="text/javascript"></script>
-    <script src="../../static/assets/vendor/fileinput/js/locales/es.js" type="text/javascript"></script>
-    <script src="../../static/assets/vendor/fileinput/themes/fas/theme.js" type="text/javascript"></script>
-    <script src="../../static/assets/vendor/fileinput/themes/explorer-fas/theme.js" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/jquery/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/bootstrap/js/bootstrap.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/slimscroll/jquery.slimscroll.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/libs/js/main-js.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/fileinput/js/fileinput.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/fileinput/js/zh.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/fileinput/js/plugins/piexif.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/fileinput/js/plugins/sortable.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/fileinput/js/locales/fr.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/fileinput/js/locales/es.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/fileinput/themes/fas/theme.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='assets/vendor/fileinput/themes/explorer-fas/theme.js') }}" type="text/javascript"></script>
 </head>
 
 <body>
@@ -91,29 +91,7 @@
                                 <a class="nav-link" href="{{ url_for('blog.dir_local') }}">功能菜单2</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-3" aria-controls="submenu-3"><i class="fas fa-fw fa-chart-pie"></i>功能菜单3</a>
-                                <div id="submenu-3" class="collapse submenu" style="">
-                                    <ul class="nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="chart-c3.html">功能菜单3.1</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="chart-chartist.html">功能菜单3.2</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="chart-charts.html">功能菜单3.3</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="chart-morris.html">功能菜单3.4</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="chart-sparkline.html">功能菜单3.5</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="chart-gauge.html">功能菜单3.6</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <a class="nav-link" href="{{ url_for('blog.dir_hdfs') }}">功能菜单3</a>
                             </li>
                             <li class="nav-item ">
                                 <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><i class="fab fa-fw fa-wpforms"></i>功能菜单4</a>

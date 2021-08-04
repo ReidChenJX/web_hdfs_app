@@ -27,6 +27,13 @@ class LinuxToHdfs:
         """
         return self.client.listdir(path, **kwargs)
     
+    def exists(self, path, **kwargs):
+        """
+        查看目录地址是否存在
+        :param path: HDFS 路径地址
+        """
+        return self.client.exists(path)
+    
     def list_status(self, path, **kwargs):
         # 获取文件或文件夹属性，通过type 区分文件与文件夹
         return self.client.list_status(path, **kwargs)
