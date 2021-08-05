@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# -*- coding:utf-8 -*-
+# -*- coding:UTF-8 -*-
 # @time     : 2021/7/26 10:23
 # @Author   : ReidChen
 # Document  ：配置文件

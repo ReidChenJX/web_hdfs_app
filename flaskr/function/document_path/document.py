@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# -*- coding:utf-8 -*-
+# -*- coding:UTF-8 -*-
 # @time     : 2021/8/3 10:01
 # @Author   : ReidChen
 # Document  ：为前端页面提供当前访问路径的文件列表；提供HDFS的文件列表
@@ -58,7 +58,6 @@ class HDFSReader(HDFSConfig):
         files = []
         
         list_xattrs = self.linux_sion.list_status(self.real_path)
-        print(list_xattrs)
         for f in list_xattrs:
             _time = time.strftime("%Y/%m/%d %H:%M", time.localtime(f.modificationTime // 1000))
             if f.type == 'DIRECTORY':

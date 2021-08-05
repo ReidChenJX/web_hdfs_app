@@ -367,7 +367,9 @@
 <script>
     $('#md5file').fileinput({
         language: 'zh',
-        uploadUrl: '/upload',
+        {% block trans_dir %}
+        uploadUrl: "{{ url_for('blog.upload',path_uri=path) }}",
+        {% endblock %}
         showCaption: true,//是否显示被选文件的简介
         showUpload: true,//是否显示上传按钮
         showRemove: true,//是否显示删除按钮

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# -*- coding:utf-8 -*-
+# -*- coding:UTF-8 -*-
 # @time     : 2021/7/21 9:49
 # @Author   : ReidChen
 # Document  ：主页面功能
@@ -12,7 +12,7 @@ from flaskr.auth import login_required
 from flaskr.db_table import UserTable, PostTable
 from flaskr import db
 from flaskr.function.document_path.document import DocumentReader, HDFSReader
-from flaskr.function.upload_file.colle_file import LinuxToHdfs
+from flaskr.function.upload_file.func_api import upload_web_hdfs
 
 bp = Blueprint('blog', __name__)
 
@@ -70,7 +70,8 @@ def split_path(path):
 
 
 @bp.route('/upload', methods=['GET', 'POST'])
-def upload():
+@bp.route('/upload/<path:path_uri>', methods=['GET', 'POST'])
+def upload(path_uri=''):
     # 文件上传功能,异步上传，只用考虑单文件情况
     basedir = os.path.abspath(os.path.dirname(__file__))
     session_name = session['user_name']
@@ -87,9 +88,11 @@ def upload():
         uploadpath = os.path.join(uploadDir, filename)
         f.save(uploadpath)
         # 本地文件上传至服务器后，将服务器文件上传至HDFS
-        local_file_path = ''
-        hdfs_file_path = ''
-        # funcation
+        local_file_path = uploadpath        # linux 文件路径
+        hdfs_dir = current_app.config['hdfs_dir']
+        hdfs_file_path = os.path.join(hdfs_dir,path_uri) + '/'         # 当前页面指定的 hdfs 路径
+        upload_web_hdfs(local_file_path, hdfs_file_path)
+
         return jsonify({"code": 200,
                         "info": "文件：%s 上传成功" % filename})
 

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# -*- coding:utf-8 -*-
+# -*- coding:UTF-8 -*-
 # @time     : 2021/7/8 11:19
 # @Author   : ReidChen
 # Document  ：Collect files and move it to Hdfs. 改用PSCP执行命令
@@ -49,7 +49,8 @@ class LinuxToHdfs:
             file_name = linux_path.split('/')[-1]
             hdfs_file = hdfs_path + file_name
             # hdfs_path 具体到文件名 /filehouse/file/pscp_test.zip
-            self.client.create(hdfs_file, linux_path, overwrite=True)
+            f = open(linux_path, 'rb')
+            self.client.create(hdfs_file, f, overwrite=True)
             # 返回源linux地址与HDFS地址
             
             return linux_path, hdfs_file
