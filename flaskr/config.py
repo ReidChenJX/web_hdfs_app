@@ -48,8 +48,10 @@ class HDFSConfig:
     linux_ip = '172.18.0.202'
     linux_user = 'root'
     linux_passwd = 'sangfor@2021'
-    # HDFS 环境
+    # HDFS 环境--上传文件时host 格式
     pyhdfs_hosts = '172.18.0.202:50070,172.18.0.203:50070'
+    # HDFS 环境--下载文件时host 格式
+    hdfs_host = 'http://172.18.0.203:50070'
     hdfs_user = 'hadoop'
     # 地址信息
     linux_path = '/home/project/tmp_file/'

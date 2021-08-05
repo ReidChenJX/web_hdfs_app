@@ -12,7 +12,7 @@ from flaskr.auth import login_required
 from flaskr.db_table import UserTable, PostTable
 from flaskr import db
 from flaskr.function.document_path.document import DocumentReader, HDFSReader
-from flaskr.function.upload_file.func_api import upload_web_hdfs
+from flaskr.function.upload_file.func_api import upload_web_hdfs, down_hdfs_web
 
 bp = Blueprint('blog', __name__)
 
@@ -57,7 +57,7 @@ def dir_hdfs(path_uri=''):
     file_reader = HDFSReader(real_path)
     
     if not file_reader.linux_sion.exists(real_path):
-        return render_template('main/dir_local.html', error_info="错误的路径...")
+        return render_template('main/dir_hdfs.html', error_info="错误的路径...")
     dirs, files = file_reader.analysis_dir_hdfs()
     
     return render_template('main/dir_hdfs.html', path=path_uri, dirs=dirs, files=files, error_info=None)
@@ -73,7 +73,7 @@ def split_path(path):
 @bp.route('/upload/<path:path_uri>', methods=['GET', 'POST'])
 def upload(path_uri=''):
     # 文件上传功能,异步上传，只用考虑单文件情况
-    basedir = os.path.abspath(os.path.dirname(__file__))
+    basedir = current_app.config['basedir']
     session_name = session['user_name']
     uploadDir = os.path.join(basedir, 'FileRecv/{username}'.format(username=session_name))
     
@@ -106,6 +106,31 @@ def download(filename, path=None):
     else:
         real_path = os.path.join(current_app.config['basedir'], path)
     return send_from_directory(real_path, filename, mimetype='application/octet-stream')
+
+
+@bp.route('/hdfs_down/<filename>')
+@bp.route('/hdfs_down/<path:path>/<filename>')
+def hdfs_download(filename, path=None):
+    # 直接下载 HDFS 文件
+    # 将hdfs文件下载至本地对应账户自己的文件目录内
+    if not path:
+        # 根目录文件
+        hdfs_path = current_app.config['hdfs_dir']
+    else:
+        hdfs_path = os.path.join(current_app.config['hdfs_dir'],path)
+    hdfs_file = os.path.join(hdfs_path, filename)
+    
+    # 确定下载文件的中间位置
+    basedir = current_app.config['basedir']
+    session_name = session['user_name']
+    uploadDir = os.path.join(basedir, 'FileRecv/{username}'.format(username=session_name))
+    if not os.path.exists(uploadDir):
+        os.makedirs(uploadDir)
+    #将 本地文件下载生成对应的连接地址下载下来
+    down_hdfs_web(hdfs_dir=hdfs_file, loacl_dir=uploadDir)
+    
+    #将中间文件下载至网页
+    return send_from_directory(uploadDir, filename, mimetype='application/octet-stream')
 
 
 @bp.route('/create', methods=('GET', 'POST'))

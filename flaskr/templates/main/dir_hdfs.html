@@ -306,9 +306,9 @@
                     <tr>
                         <td> {{ loop.index }}</td>
                         {% if not path %}
-                        <td><a href="{{ url_for('blog.download',filename=file[0]) }}">{{ file[0] }}</a></td>
+                        <td><a href="{{ url_for('blog.hdfs_download',filename=file[0]) }}">{{ file[0] }}</a></td>
                         {% else %}
-                        <td><a href="{{ url_for('blog.download',path=path,filename=file[0]) }}">{{ file[0] }}</a></td>
+                        <td><a href="{{ url_for('blog.hdfs_download',path=path,filename=file[0]) }}">{{ file[0] }}</a></td>
                         {% endif %}
                         <td>{{ file[1] }}</td>
                         <td>{{ file[2] }}</td>
@@ -381,6 +381,7 @@
         minFileCount : 1,
       }).on("fileuploaded", function (res) {
           console.log(res);
+
       });
 
 </script>

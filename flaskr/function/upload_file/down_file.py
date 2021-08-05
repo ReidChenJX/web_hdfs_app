@@ -15,7 +15,6 @@ class HdfsToLocal:
         self.hosts = hosts      # 分号间隔
         self.client = hdfs.client.InsecureClient(self.hosts)
         
-
     
     def down_file(self, file, local_path, threads=3, overwrite=True):
         """ 将hdfs 文件下载到本地
