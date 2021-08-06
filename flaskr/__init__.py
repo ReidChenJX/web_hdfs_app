@@ -6,15 +6,19 @@
 
 import os
 import json
-from flask import Flask
+import logging
+import time
+from flask import Flask, jsonify
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_moment import Moment
 from .config import config
+from .BaseError import BaseError, ValidationError, NotFoundError, FormError, OrmError
 
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 moment = Moment()
+
 
 def create_app(test_config=None):
     """
@@ -50,26 +54,36 @@ def create_app(test_config=None):
     except OSError:
         pass
     
-    @app.route('/hello')
-    def hello():
-        return f'Hello World !'
-
     moment.init_app(app)
     bootstrap.init_app(app)
     db.init_app(app)
     
-    # from . import auth, upload
-    from . import auth,blog
+    # 蓝图
+    from . import auth, blog
     app.register_blueprint(auth.bp)
     app.register_blueprint(blog.bp)
     # app.register_blueprint(upload.bp)
     app.add_url_rule('/', endpoint='index')
-
+    
     @app.template_filter("split_path")
     def split_path(path):
         path_list = path.split('/')
         path_list = [[path_list[i - 1], '/'.join(path_list[:i])] for i in range(1, len(path_list) + 1)]
         return path_list
-    
-    return app
 
+    # 日志功能-按时间创建日志文件
+    log_file_name = 'log/logger-' + time.strftime('%Y-%m-%d', time.localtime(time.time())) + '.log'
+    log_file_dir = os.path.join(basedir,log_file_name)
+    if not os.path.exists(log_file_dir):
+        open(log_file_dir, 'w').close()
+    
+    handler = logging.FileHandler(log_file_dir, encoding='UTF-8')
+    # 控制日志写入级别：基础级别：DEBUG
+    handler.setLevel(logging.DEBUG)
+    logging_format = logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
+    handler.setFormatter(logging_format)
+
+    app.logger.addHandler(handler)
+
+    return app

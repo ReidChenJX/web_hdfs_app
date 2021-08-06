@@ -5,7 +5,7 @@
 # Document  ：
 
 import functools
-from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 from . import db
 from .db_table import UserTable
@@ -42,6 +42,8 @@ def register():
             # 注册成功，返回登录页面
             return redirect(url_for('auth.login'))
         # 注册失败，返回错误信息
+        # current_app.logger.debug(error,exc_info=
+        current_app.logger.debug(error)
         flash(error)  # 储存在渲染模块时可以调用的信息
     return render_template('auth/sign-up.html', title='注册')
 
