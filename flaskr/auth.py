@@ -5,15 +5,19 @@
 # Document  ：
 
 import functools
-from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app
+import json
+import datetime
+from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, current_app, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from . import db
 from .db_table import UserTable
 from .forms import LoginForm, RegisterForm, ResetPassword
 
 # 使用蓝图，蓝图的名称会添加到函数名称的前面
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+bp = Blueprint('auth', __name__, )
 
+
+# url_prefix='/auth'
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -48,33 +52,48 @@ def register():
     return render_template('auth/sign-up.html', title='注册')
 
 
-@bp.route('/login', methods=('GET', 'POST'))
+@bp.route('/system/login', methods=('GET', 'POST'))
 def login():
-    """登录"""
-    # form = LoginForm()
+    """登录
+    :return: resp
+    """
+    
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        error = None
+        # vue 前端返回JSON格式，需解码
+        post_data = json.loads(request.get_data())
+        username = post_data['stUserName']
+        password = post_data['stPassword']
         # 判断登录名是否在数据库中
-        user = UserTable.query.filter_by(username=username).first_or_404()
+        user = UserTable.query.filter_by(username=username).first()
+        # 需返回数据
+        msg,stName,deptInfo,roleList,menuList,token,code = None,None,None,None,None,None,None
         
         if user is None:
-            error = 'Incorrect username.'
-        # 验证登录密码
+            code = 1
+            msg = '用户不存在.'
         elif not check_password_hash(user.password, password):
-            error = 'Incorrect password.'
-        
-        if error is None:
-            session.clear()
-            # 将客户ID存储在会话的cookie中
-            session['user_id'] = user.id
-            session['user_name'] = user.username
-            print(session)
-            # 登录成功，返回首页
-            return redirect(url_for('blog.index'))
-        flash(error)
-    return render_template('auth/login.html', title='登录')
+            # 验证登录密码
+            code = 2
+            msg = '用户名密码错误.'
+
+        if msg is None:
+            # 登录成功，返回数据
+            code = 0
+            msg = '操作成功'
+            token = str(user.id) +"_"+ datetime.datetime.now().strftime("%Y-%m-%d_%I:%M:%S")
+            stName = user.username
+            deptInfo = {1:'研发'}
+            roleList = [1,2]
+            menuList = [1,2]
+            
+            # 登录成功，在session中保存信息
+            session['user_name'] = stName
+            
+        userInfo = {'stName':stName}
+        user = {'userInfo':userInfo, 'deptInfo':deptInfo, 'roleList':roleList, 'menalist':menuList}
+        data = {'token':token, 'user':user}
+        resp = {'msg':msg,'code':code,'data':data}
+        return (jsonify(resp))
 
 
 @bp.before_app_request
@@ -88,11 +107,13 @@ def load_logged_in_user():
         g.user = UserTable.query.filter_by(id=user_id).first_or_404()
 
 
-@bp.route('/logout')
+@bp.route('/system/logout')
 def logout():
     # 注销当前账户
-    session.clear()
-    return redirect(url_for('auth.login'))
+    post_data = json.loads(request.get_data())
+    username = post_data['stUserName']
+    session.pop('user_name',username)
+    return
 
 
 def login_required(view):
